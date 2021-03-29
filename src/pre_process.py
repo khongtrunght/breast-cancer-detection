@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 
 def pre_process():
-    data = pd.read_csv("/home/khongtrunght/Documents/machineLearning/project/data/project.data", header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
+    data = pd.read_csv("./data/project.data", header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
     data = data.dropna()
 
     dmmargin = pd.get_dummies(data['margin'], prefix= 'margin')
