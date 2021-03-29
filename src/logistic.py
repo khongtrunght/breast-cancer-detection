@@ -96,12 +96,16 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = np.atleast_2d(X_train), np.atleast_2d(X_test), np.atleast_2d(Y_train), np.atleast_2d(Y_test)
     Y_train, Y_test = Y_train.T, Y_test.T
 
-    logistic = LogisticRegression(num_iters = 3000)
+    logistic = LogisticRegression(num_iters = 2000)
     logistic.fit(X_train, Y_train)
     print(X_test)
     Y_predict = logistic.predict(X_test)
     print((Y_predict == Y_test).sum() / len(Y_test))
     print(logistic.theta)
     
-    print("du doan", logistic.predict(np.atleast_2d([75,3,0,0,0,1,0,0,0,0,1])))
+    Y_train_predict = logistic.predict(X_train)
+    print((Y_train_predict == Y_train).sum() / len(Y_train))
+
+    
+    # print("du doan", logistic.predict(np.atleast_2d([75,3,0,0,0,1,0,0,0,0,1])))
 

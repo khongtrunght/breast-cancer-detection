@@ -4,25 +4,27 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 
 def pre_process():
-    data = pd.read_csv("project.data", header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
-    print(pd.get_dummies(data))
+    data = pd.read_csv("/home/khongtrunght/Documents/machineLearning/project/data/project.data", header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
+    data = data.dropna()
+
     dmmargin = pd.get_dummies(data['margin'], prefix= 'margin')
     dmshape = pd.get_dummies(data['shape'], prefix= 'shape')
     data.drop('shape', axis= 1, inplace=True)
     data.drop('margin', axis= 1, inplace=True)
     data = data.join(dmshape)
     data = data.join(dmmargin)
-    print(data.head())
-    # print(data.mean())
+    cols = data.columns.tolist()
+    cols.remove('severity')
+    cols.append('severity')
+    data = data[cols]
     # positive = data.loc[data.severity.eq(1)]
     # negative = data.loc[data.severity.eq(0)]
     # data.loc[data.severity.eq(1)] = data.fillna(positive.mean())
-    data = data.dropna()
     # data.loc[data.severity.eq(0)] = data.fillna(negative.mean())
     X = data.iloc[:,1:-1]
     Y = data.iloc[:,-1]
-
-    X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.1,random_state=42)
+    print(data.columns)
+    X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.2,random_state=42)
 
 #Feature Scaling
     from sklearn.preprocessing import StandardScaler
