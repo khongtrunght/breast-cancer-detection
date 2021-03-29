@@ -2,35 +2,6 @@ import numpy as np
 import math
 from pre_process import pre_process
 
-def log(x):
-    g = lambda x: math.log(x)
-    return np.vectorize(g)(x)
-
-def sigmoid(z):
-    g = lambda z : 1 / (1 + math.exp(-z))
-    return np.vectorize(g)(z)
-
-def costFunction(theta, X, y):
-    """ Compute cost and gradient for logistic regression""" 
-    m = len(y)
-    h = sigmoid(X@theta)
-    J = 1 / m  * (- y.T @ log(h) - (1-y).T @ log(1-h))  
-    # grad = 1/ m * X.T @ (h - y)
-    return J
-
-def gradientDescent(X, y, theta, alpha, num_iters):
-    """ Return theta and J_history """ 
-    #  number of instances
-    m = len(y)
-    J_history = np.zeros((num_iters,1))
-    for i in range(num_iters):
-        h = sigmoid(X@theta)
-        grad = 1 / m * X.T @ (h - y)
-        theta = theta - alpha * grad 
-        J_history[i] = costFunction(theta, X, y)
-        
-    return theta, J_history
-
 class LogisticRegression:
     def __init__(self,num_iters = 2000, alpha  = 0.01):
         self.NUM_ITERS = num_iters
@@ -58,7 +29,7 @@ class LogisticRegression:
         m = len(y)
         J_history = np.zeros((self.NUM_ITERS,1))
         for i in range(self.NUM_ITERS):
-            h = sigmoid(X@theta)
+            h = self.sigmoid(X@theta)
             grad = 1 / m * X.T @ (h - y)
             theta = theta - self.ALPHA * grad 
             J_history[i] = self.costFunction(theta, X, y)
@@ -82,7 +53,7 @@ class LogisticRegression:
 
         Y_predict = np.zeros((len(X_test), 1))
         for i in range(len(X_test)):
-            if sigmoid(X_test[i]@self.theta) >= 0.5:
+            if self.sigmoid(X_test[i]@self.theta) >= 0.5:
                 Y_predict[i] = 1
                 
         return Y_predict
@@ -91,8 +62,6 @@ class LogisticRegression:
     
 if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = pre_process()
-    print(X_test)
-    print(X_train)
     X_train, X_test, Y_train, Y_test = np.atleast_2d(X_train), np.atleast_2d(X_test), np.atleast_2d(Y_train), np.atleast_2d(Y_test)
     Y_train, Y_test = Y_train.T, Y_test.T
 
