@@ -2,35 +2,41 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import seaborn as sns
+import os
 
 def pre_process():
-    data = pd.read_csv("./data/project.data", header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
-    data = data.dropna()
+    def read_data(filename):
+        data = pd.read_csv(filename, header= None, names = ['assessment','age','shape','margin','density','severity'], na_values= '?')
+        data = data.dropna()
 
-    dmmargin = pd.get_dummies(data['margin'], prefix= 'margin')
-    dmshape = pd.get_dummies(data['shape'], prefix= 'shape')
-    data.drop('shape', axis= 1, inplace=True)
-    data.drop('margin', axis= 1, inplace=True)
-    data = data.join(dmshape)
-    data = data.join(dmmargin)
-    cols = data.columns.tolist()
-    cols.remove('severity')
-    cols.append('severity')
-    data = data[cols]
-    # positive = data.loc[data.severity.eq(1)]
-    # negative = data.loc[data.severity.eq(0)]
-    # data.loc[data.severity.eq(1)] = data.fillna(positive.mean())
-    # data.loc[data.severity.eq(0)] = data.fillna(negative.mean())
-    X = data.iloc[:,1:-1]
-    Y = data.iloc[:,-1]
-    print(data.columns)
-    X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.2,random_state=42)
-
-#Feature Scaling
-    from sklearn.preprocessing import StandardScaler
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
-    X_test = sc.transform(X_test)
+        dmmargin = pd.get_dummies(data['margin'], prefix= 'margin')
+        dmshape = pd.get_dummies(data['shape'], prefix= 'shape')
+        data.drop('shape', axis= 1, inplace=True)
+        data.drop('margin', axis= 1, inplace=True)
+        data = data.join(dmshape)
+        data = data.join(dmmargin)
+        cols = data.columns.tolist()
+        cols.remove('severity')
+        cols.append('severity')
+        data = data[cols]
+        # positive = data.loc[data.severity.eq(1)]
+        # negative = data.loc[data.severity.eq(0)]
+        # data.loc[data.severity.eq(1)] = data.fillna(positive.mean())
+        # data.loc[data.severity.eq(0)] = data.fillna(negative.mean())
+        X = data.iloc[:,1:-1]
+        Y = data.iloc[:,-1]
+        return X, Y
+    
+    def normalize_and_add_one(X):
+        from sklearn.preprocessing import StandardScaler
+        sc = StandardScaler()
+        X = sc.fit_transform(X)
+        return X
+    
+    filename = os.path.join(os.path.dirname(__file__),"../data/project.data")
+    X, Y = read_data(filename)
+    X = normalize_and_add_one(X)
+    X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=0.2,random_state=42)    
 
     return X_train, X_test, Y_train, Y_test
 
